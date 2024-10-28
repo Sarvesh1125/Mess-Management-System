@@ -1,0 +1,168 @@
+#include <iostream>
+using namespace std;
+
+const int MAX_MEALS = 10;
+const int MAX_CUSTOMERS = 20;
+const int NAME_LENGTH = 50;
+
+class Meal {
+public:
+char name[NAME_LENGTH];
+float price;
+
+Meal() {
+name[0] = '\0';
+price = 0.0;
+}
+
+void setName(const char* mealName) {
+for (int i = 0; i < NAME_LENGTH - 1 && mealName[i] != '\0'; i++) {
+name[i] = mealName[i];
+}
+name[NAME_LENGTH - 1] = '\0';
+}
+};
+
+class Customer {
+public:
+char name[NAME_LENGTH];
+float balance;
+
+Customer() {
+name[0] = '\0';
+balance = 0.0;
+}
+
+void setName(const char* customerName) {
+for (int i = 0; i < NAME_LENGTH - 1 && customerName[i] != '\0'; i++) {
+name[i] = customerName[i];
+}
+name[NAME_LENGTH - 1] = '\0';
+}
+
+void addBalance(float amount) {
+balance += amount;
+}
+};
+
+class MessManagementSystem {
+private:
+Meal meals[MAX_MEALS];
+Customer customers[MAX_CUSTOMERS];
+int mealCount;
+int customerCount;
+
+public:
+MessManagementSystem() : mealCount(0), customerCount(0) {}
+
+void addMeal() {
+if (mealCount < MAX_MEALS) {
+char mealName[NAME_LENGTH];
+float mealPrice;
+
+cout << "Enter meal name: ";
+cin >> mealName;
+cout << "Enter meal price: ";
+cin >> mealPrice;
+
+meals[mealCount].setName(mealName);
+meals[mealCount].price = mealPrice;
+mealCount++;
+cout << "Meal added: " << meals[mealCount - 1].name << " at ₹" << mealPrice << endl;
+} else {
+cout << "Menu is full! Cannot add more meals." << endl;
+}
+}
+
+void addCustomer() {
+if (customerCount < MAX_CUSTOMERS) {
+char customerName[NAME_LENGTH];
+float initialBalance;
+
+cout << "Enter customer name: ";
+cin >> customerName;
+cout << "Enter initial balance: ";
+cin >> initialBalance;
+
+customers[customerCount].setName(customerName);
+customers[customerCount].addBalance(initialBalance);
+customerCount++;
+cout << "Customer added: " << customers[customerCount - 1].name 
+<< " with balance ₹" << initialBalance << endl;
+} else {
+cout << "Customer list is full! Cannot add more customers." << endl;
+}
+}
+
+void displayMeals() {
+cout << "\n*** Menu ***\n";
+for (int i = 0; i < mealCount; ++i) {
+cout << i + 1 << ". " << meals[i].name << " - ₹" << meals[i].price << endl;
+}
+}
+
+void displayCustomers() {
+cout << "\n*** Customers ***\n";
+for (int i = 0; i < customerCount; ++i) {
+cout << i + 1 << ". " << customers[i].name << " - Balance: ₹" << customers[i].balance << endl;
+}
+}
+
+void orderMeal() {
+int customerIndex, mealIndex;
+cout << "Enter customer number: ";
+cin >> customerIndex;
+cout << "Enter meal number to order: ";
+cin >> mealIndex;
+
+if (customerIndex >= 1 && customerIndex <= customerCount && 
+mealIndex >= 1 && mealIndex <= mealCount) {
+int index = customerIndex - 1;
+if (customers[index].balance >= meals[mealIndex - 1].price) {
+customers[index].balance -= meals[mealIndex - 1].price;
+cout << customers[index].name << " ordered: " << meals[mealIndex - 1].name 
+<< " for ₹" << meals[mealIndex - 1].price << ". Remaining balance: ₹" 
+<< customers[index].balance << endl;
+} else {
+cout << "Insufficient balance for " << customers[index].name << "." << endl;
+}
+} else {
+cout << "Invalid selection." << endl;
+}
+}
+};
+
+int main() {
+MessManagementSystem system;
+
+int choice;
+do {
+cout << "\n1. Add Meal\n2. Add Customer\n3. Display Menu\n4. Display Customers\n5. Order Meal\n6. Exit\nEnter your choice: ";
+cin >> choice;
+
+switch (choice) {
+case 1:
+system.addMeal();
+break;
+case 2:
+system.addCustomer();
+break;
+case 3:
+system.displayMeals();
+break;
+case 4:
+system.displayCustomers();
+break;
+case 5:
+system.orderMeal();
+break;
+case 6:
+cout << "Exiting the system." << endl;
+break;
+default:
+cout << "Invalid choice, please try again." << endl;
+}
+} while (choice != 6);
+
+return 0;
+}
